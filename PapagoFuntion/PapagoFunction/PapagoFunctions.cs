@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -14,6 +15,7 @@ namespace PapagoFunction
         [FunctionName("Translate")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            ExecutionContext context,
             ILogger log)
         {
 
@@ -27,9 +29,19 @@ namespace PapagoFunction
 
             Papago papago = new Papago();
 
+            
+            var myConfig = new ConfigurationBuilder()
+                                .SetBasePath(context.FunctionAppDirectory)
+                                .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                                .AddEnvironmentVariables()
+                                .Build();
+
+            string papagoID = myConfig["X-Naver-Client-Id"];
+            string papagoPS = myConfig["X-Naver-Client-Secret"];
+
             string responseMessage = string.IsNullOrEmpty(trans)
-                ? papago.GetTransResult("Papago 번역기 API")
-                : papago.GetTransResult(trans);
+                ? papago.GetTransResult("Papago 번역기 API",papagoID,papagoPS)
+                : papago.GetTransResult(trans, papagoID, papagoPS);
 
             return new OkObjectResult(responseMessage);
                             

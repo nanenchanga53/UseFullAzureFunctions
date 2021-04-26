@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Net;
@@ -13,12 +14,13 @@ namespace PapagoFunction
 
         }
 
-        public string GetTransResult(string query)
+        public string GetTransResult(string query, string papagoID, string papagoPS)
         {
             string url = "https://openapi.naver.com/v1/papago/n2mt";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Headers.Add("X-Naver-Client-Id", "nF5lBrmaVoNmaaG4gU9r");
-            request.Headers.Add("X-Naver-Client-Secret", "O6OyRU_9k_");
+
+            request.Headers.Add("X-Naver-Client-Id", papagoID);
+            request.Headers.Add("X-Naver-Client-Secret", papagoPS);
             request.Method = "POST";
             byte[] byteDataParams = Encoding.UTF8.GetBytes("source=ko&target=ja&text=" + query);
             request.ContentType = "application/x-www-form-urlencoded";
