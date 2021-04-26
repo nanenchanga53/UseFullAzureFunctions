@@ -38,10 +38,10 @@ namespace PapagoFunction
 
             string papagoID = myConfig["X-Naver-Client-Id"];
             string papagoPS = myConfig["X-Naver-Client-Secret"];
-
+                        
             string responseMessage = string.IsNullOrEmpty(trans)
                 ? papago.GetTransResult("Papago ¹ø¿ª±â API",papagoID,papagoPS)
-                : papago.GetTransResult(trans, papagoID, papagoPS);
+                : papago.GetTransResult(trans, papagoID, papagoPS, papago.GetWhatIsLang(trans,papagoID,papagoPS));
 
             return new OkObjectResult(responseMessage);
                             
